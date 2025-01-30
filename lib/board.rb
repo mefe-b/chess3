@@ -1,21 +1,21 @@
-require "pry-byebug"
-require "rainbow"
-Dir[File.join(__dir__, "pieces", "*.rb")].sort.each { |file| require file }
+require 'pry-byebug'
+require 'rainbow'
+Dir[File.join(__dir__, 'pieces', '*.rb')].sort.each { |file| require file }
 
 # Describes a chess board
 class Board
   attr_accessor :board
 
-  WHITE_BACKGROUND = "ffffff".freeze
-  GREEN_BACKGROUND = "6a9b41".freeze
-  YELLOW_BACKGROUND = "e0c372".freeze
+  WHITE_BACKGROUND = 'ffffff'.freeze
+  LIGH_STEEL_BLUE_BACKGROUND = '6e7b8b'.freeze
+  LILAC_BACKGROUND = '8470ff'.freeze
   def initialize
-    @board = Array.new(8) { Array.new(8) { " " } }
+    @board = Array.new(8) { Array.new(8) { ' ' } }
   end
 
   def display_board
     print "\n"
-    print "  "
+    print '  '
     (97..104).each { |num| print " #{num.chr} " }
     count = 8
     print "\n"
@@ -35,7 +35,7 @@ class Board
 
   def highlight(moves)
     print "\n"
-    print "  "
+    print '  '
     (97..104).each { |num| print " #{num.chr} " }
     count = 8
     print "\n"
@@ -57,9 +57,9 @@ class Board
   end
 
   def display_background(square, background)
-    print Rainbow(" ").background(background)
+    print Rainbow(' ').background(background)
     print Rainbow(square).background(background)
-    print Rainbow(" ").background(background)
+    print Rainbow(' ').background(background)
   end
 
   def fill_board
@@ -138,7 +138,7 @@ class Board
   def clear_board
     (0..7).each do |row|
       (0..7).each do |col|
-        @board[row][col] = " "
+        @board[row][col] = ' '
       end
     end
   end

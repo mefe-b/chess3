@@ -1,6 +1,5 @@
-
-require "yaml"
-require_relative "piece_move"
+require 'yaml'
+require_relative 'piece_move'
 class ChessGame
   attr_accessor :board, :move_logic
 
@@ -41,31 +40,31 @@ class ChessGame
   end
 
   def quit?(input)
-    input == "q"
+    input == 'q'
   end
 
   def quit
-    puts "Exiting game..."
+    puts 'Exiting game...'
     abort
   end
 
   def save_game?(input)
-    input == "save"
+    input == 'save'
   end
 
   def save_game
-    puts "Enter a name for the save file"
+    puts 'Enter a name for the save file'
     save_name = gets.chomp
-    save_file = File.new("lib/saves/#{save_name}.yml", "w")
+    save_file = File.new("lib/saves/#{save_name}.yml", 'w')
     save_file.puts(to_yaml)
   end
 
   def load_game?(input)
-    input == "load"
+    input == 'load'
   end
 
   def cancel?(input)
-    return false if input != "cancel"
+    return false if input != 'cancel'
 
     @selected_next_square = input
     true
@@ -74,14 +73,14 @@ class ChessGame
   def load_game
     i = 1
     save_files = {}
-    Dir.foreach("lib/saves") do |filename|
-      next if [".", ".."].include?(filename)
+    Dir.foreach('lib/saves') do |filename|
+      next if ['.', '..'].include?(filename)
 
       puts("Save file #{i}: #{filename}")
       save_files[i.to_s] = filename
       i += 1
     end
-    puts "Enter the number of the save"
+    puts 'Enter the number of the save'
     save_file_number = gets.chomp
     p save_files[save_file_number]
     save_file_data = File.read("lib/saves/#{save_files[save_file_number]}")
@@ -158,12 +157,12 @@ class ChessGame
   end
 
   def draw_offer(offer)
-    return unless offer == "draw"
+    return unless offer == 'draw'
 
     puts "#{@color_turn} offered a draw"
-    puts "Enter a:accept or d:decline"
+    puts 'Enter a:accept or d:decline'
     answer = gets.chomp.downcase
-    return unless answer == "a"
+    return unless answer == 'a'
 
     @draw = true
   end
@@ -196,14 +195,14 @@ class ChessGame
   def valid_piece?(square)
     draw_offer(square)
     unless draw?
-      return false if square == "draw"
+      return false if square == 'draw'
       return false unless square.length == 2
 
       selected_square = PieceMove.convert_chess_notation(square)
       return false unless square_in_range?(selected_square)
 
       selected_piece = @board[selected_square[0]][selected_square[1]]
-      return true if selected_piece != " " && selected_piece.color == @color_turn
+      return true if selected_piece != ' ' && selected_piece.color == @color_turn
     end
     return true if draw?
 
@@ -278,12 +277,12 @@ class ChessGame
   end
 
   def display_commands
-    puts "Commands q:quit save:save game load:load game cancel: to select another piece"
+    puts 'Commands q:quit save:save game load:load game cancel: to select another piece'
   end
 
   def play_game
     play_round until checkmate? || draw?
-    puts "Checkmate, Game over"
+    puts 'Checkmate, Game over'
     abort
   end
 end

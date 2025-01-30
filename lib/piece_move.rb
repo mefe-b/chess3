@@ -1,5 +1,5 @@
-require_relative "board"
-require "pry-byebug"
+require_relative 'board'
+require 'pry-byebug'
 
 class PieceMove
   attr_reader :board_obj, :board, :checking_pieces, :white_pieces, :black_pieces, :black_king, :white_king
@@ -19,7 +19,7 @@ class PieceMove
 
   def self.convert_chess_notation(chess_notation)
     max_rank = 8
-    a_ascii = "a".ord
+    a_ascii = 'a'.ord
     file = chess_notation[0]
     rank = chess_notation[1]
     rank = rank.to_i
@@ -38,7 +38,7 @@ class PieceMove
     piece = @board[row][col]
     piece.possible_moves.dup.each do |move|
       square = @board[move[0]][move[1]]
-      if (move[0] - row).abs == 1 && move[1] == col && square != (" ")
+      if (move[0] - row).abs == 1 && move[1] == col && square != (' ')
         piece.possible_moves.delete([move[0], move[1]])
         if piece.color == :white
           piece.possible_moves.delete([move[0] - 1, move[1]])
@@ -47,13 +47,13 @@ class PieceMove
         end
         next
       end
-      if (move[0] - row).abs == 2 && square != (" ")
+      if (move[0] - row).abs == 2 && square != (' ')
         piece.possible_moves.delete([move[0], move[1]])
         next
       end
       next unless move[0] != row && move[1] != col
 
-      unless (square != " " && square.color != piece.color) || en_pessant?(move, piece.color)
+      unless (square != ' ' && square.color != piece.color) || en_pessant?(move, piece.color)
         piece.possible_moves.delete([move[0], move[1]])
       end
     end
@@ -84,7 +84,7 @@ class PieceMove
     piece = board[row][col]
     piece.possible_moves.dup.each do |move|
       piece_on_move = board[move[0]][move[1]]
-      piece.possible_moves.delete(move) if piece_on_move != " " && piece_on_move.color == piece.color
+      piece.possible_moves.delete(move) if piece_on_move != ' ' && piece_on_move.color == piece.color
     end
   end
 
@@ -94,7 +94,7 @@ class PieceMove
       (0..7).each do |board_row|
         (0..7).each do |board_col|
           piece_on_square = board[board_row][board_col]
-          next unless piece_on_square != " " && piece_on_square.color != king.color
+          next unless piece_on_square != ' ' && piece_on_square.color != king.color
 
           piece_on_square.possible_moves.each do |move|
             if piece_on_square.is_a?(Pawn)
@@ -109,7 +109,7 @@ class PieceMove
       king.possible_moves.dup.each do |move|
         # binding.pry
         king.possible_moves.delete(move) if enemy_moves.include?(move)
-        if board[move[0]][move[1]] != " " && board[move[0]][move[1]].color == king.color
+        if board[move[0]][move[1]] != ' ' && board[move[0]][move[1]].color == king.color
           king.possible_moves.delete(move)
         end
       end
@@ -139,7 +139,7 @@ class PieceMove
     (0..7).each do |row|
       (0..7).each do |col|
         piece_on_square = board[row][col]
-        next unless piece_on_square != " " && !piece_on_square.pinned
+        next unless piece_on_square != ' ' && !piece_on_square.pinned
 
         piece_on_square.create_possible_moves
         if piece_on_square.color == :white
@@ -163,7 +163,7 @@ class PieceMove
     (0..7).each do |row|
       (0..7).each do |col|
         piece_on_square = board[row][col]
-        if piece_on_square != " " && !piece_on_square.pinned
+        if piece_on_square != ' ' && !piece_on_square.pinned
           piece_on_square.possible_moves.clear
           piece_on_square.attacking_moves.clear if piece_on_square.is_a?(Pawn)
         end
@@ -183,14 +183,14 @@ class PieceMove
     (0..7).each do |row|
       (0..7).each do |col|
         piece_on_square = board[row][col]
-        if piece_on_square != " " && !piece_on_square.is_a?(King) && !piece_on_square.pinned
+        if piece_on_square != ' ' && !piece_on_square.is_a?(King) && !piece_on_square.pinned
           remove_impossible_bishop_moves(row, col) if piece_on_square.is_a?(Bishop)
           remove_impossible_knight_moves(row, col) if piece_on_square.is_a?(Knight)
           remove_impossible_pawn_moves(row, col) if piece_on_square.is_a?(Pawn)
           remove_impossible_queen_moves(row, col) if piece_on_square.is_a?(Queen)
           remove_impossible_rook_moves(row, col) if piece_on_square.is_a?(Rook)
         end
-        next unless piece_on_square != " " && piece_on_square.is_a?(King)
+        next unless piece_on_square != ' ' && piece_on_square.is_a?(King)
 
         @kings.clear
         @white_king = piece_on_square if piece_on_square.color == :white
@@ -201,7 +201,7 @@ class PieceMove
   end
 
   def remove_diagonal_up_left(row, col, piece)
-    while square_in_bounds?(row - 1, col - 1) && @board[row - 1][col - 1] == " "
+    while square_in_bounds?(row - 1, col - 1) && @board[row - 1][col - 1] == ' '
       row -= 1
       col -= 1
     end
@@ -210,14 +210,14 @@ class PieceMove
     while square_in_bounds?(row - 1, col - 1)
       row -= 1
       col -= 1
-      opposite_piece_found += 1 if @board[row][col] != " " && @board[row][col].color != piece.color
-      piece.possible_moves.delete([row, col]) unless opposite_piece_found == 1 && @board[row][col] != " " && !blocked
+      opposite_piece_found += 1 if @board[row][col] != ' ' && @board[row][col].color != piece.color
+      piece.possible_moves.delete([row, col]) unless opposite_piece_found == 1 && @board[row][col] != ' ' && !blocked
     end
   end
 
   def remove_diagonal_up_right(row, col, piece)
     # binding.pry if row == 7 && col == 2
-    while square_in_bounds?(row - 1, col + 1) && @board[row - 1][col + 1] == " "
+    while square_in_bounds?(row - 1, col + 1) && @board[row - 1][col + 1] == ' '
       row -= 1
       col += 1
     end
@@ -227,14 +227,14 @@ class PieceMove
     while square_in_bounds?(row - 1, col + 1)
       row -= 1
       col += 1
-      opposite_piece_found += 1 if @board[row][col] != " " && @board[row][col].color != piece.color
-      piece.possible_moves.delete([row, col]) unless opposite_piece_found == 1 && @board[row][col] != " " && !blocked
+      opposite_piece_found += 1 if @board[row][col] != ' ' && @board[row][col].color != piece.color
+      piece.possible_moves.delete([row, col]) unless opposite_piece_found == 1 && @board[row][col] != ' ' && !blocked
     end
   end
 
   def remove_diagonal_down_left(row, col, piece)
     # binding.pry
-    while square_in_bounds?(row + 1, col - 1) && @board[row + 1][col - 1] == " "
+    while square_in_bounds?(row + 1, col - 1) && @board[row + 1][col - 1] == ' '
       row += 1
       col -= 1
     end
@@ -243,13 +243,13 @@ class PieceMove
     while square_in_bounds?(row + 1, col - 1)
       row += 1
       col -= 1
-      opposite_piece_found += 1 if @board[row][col] != " " && @board[row][col].color != piece.color
-      piece.possible_moves.delete([row, col]) unless opposite_piece_found == 1 && @board[row][col] != " " && !blocked
+      opposite_piece_found += 1 if @board[row][col] != ' ' && @board[row][col].color != piece.color
+      piece.possible_moves.delete([row, col]) unless opposite_piece_found == 1 && @board[row][col] != ' ' && !blocked
     end
   end
 
   def remove_diagonal_down_right(row, col, piece)
-    while square_in_bounds?(row + 1, col + 1) && @board[row + 1][col + 1] == " "
+    while square_in_bounds?(row + 1, col + 1) && @board[row + 1][col + 1] == ' '
       row += 1
       col += 1
     end
@@ -258,13 +258,13 @@ class PieceMove
     while square_in_bounds?(row + 1, col + 1)
       row += 1
       col += 1
-      opposite_piece_found += 1 if @board[row][col] != " " && @board[row][col].color != piece.color
-      piece.possible_moves.delete([row, col]) unless opposite_piece_found == 1 && @board[row][col] != " " && !blocked
+      opposite_piece_found += 1 if @board[row][col] != ' ' && @board[row][col].color != piece.color
+      piece.possible_moves.delete([row, col]) unless opposite_piece_found == 1 && @board[row][col] != ' ' && !blocked
     end
   end
 
   def remove_straight_up(row, col, piece)
-    row -= 1 while (row - 1).between?(0, 7) && board[row - 1][col] == " "
+    row -= 1 while (row - 1).between?(0, 7) && board[row - 1][col] == ' '
     if !(row - 1).between?(0, 7)
       nil
     elsif board[row - 1][col].color == piece.color
@@ -282,7 +282,7 @@ class PieceMove
   end
 
   def remove_straight_right(row, col, piece)
-    col += 1 while (col + 1).between?(0, 7) && board[row][col + 1] == " "
+    col += 1 while (col + 1).between?(0, 7) && board[row][col + 1] == ' '
     if !(col + 1).between?(0, 7)
       nil
     elsif board[row][col + 1].color == piece.color
@@ -300,7 +300,7 @@ class PieceMove
   end
 
   def remove_straight_down(row, col, piece)
-    row += 1 while (row + 1).between?(0, 7) && board[row + 1][col] == " "
+    row += 1 while (row + 1).between?(0, 7) && board[row + 1][col] == ' '
     if !(row + 1).between?(0, 7)
       nil
     elsif board[row + 1][col].color == piece.color
@@ -318,7 +318,7 @@ class PieceMove
   end
 
   def remove_straight_left(row, col, piece)
-    col -= 1 while (col - 1).between?(0, 7) && board[row][col - 1] == " "
+    col -= 1 while (col - 1).between?(0, 7) && board[row][col - 1] == ' '
     if !(col - 1).between?(0, 7)
       nil
     elsif board[row][col - 1].color == piece.color
@@ -337,7 +337,7 @@ class PieceMove
 
   def move_piece(old_square, new_square)
     piece = @board[old_square[0]][old_square[1]]
-    @board[old_square[0]][old_square[1]] = " "
+    @board[old_square[0]][old_square[1]] = ' '
     if pawn_played_en_pessant?(piece, new_square)
       row = new_square[0]
       col = new_square[1]
@@ -346,7 +346,7 @@ class PieceMove
       else
         row -= 1
       end
-      @board[row][col] = " "
+      @board[row][col] = ' '
     end
     @board[new_square[0]][new_square[1]] = piece unless castling?(piece, new_square)
     castle(piece, new_square) if castling?(piece, new_square)
@@ -390,10 +390,10 @@ class PieceMove
     col = piece.current_square[1]
     color = piece.color
     pieces = {
-      "N" => Knight.new(color, [row, col]),
-      "Q" => Queen.new(color, [row, col]),
-      "B" => Bishop.new(color, [row, col]),
-      "R" => Rook.new(color, [row, col])
+      'N' => Knight.new(color, [row, col]),
+      'Q' => Queen.new(color, [row, col]),
+      'B' => Bishop.new(color, [row, col]),
+      'R' => Rook.new(color, [row, col])
     }
     board[row][col] = pieces[new_piece]
   end
@@ -415,14 +415,14 @@ class PieceMove
     until valid_promotion_input?(piece_input)
       print "\n"
       p piece_input
-      puts "Invalid: must be in chess notation format N:Knight, Q:Queen, R:Rook, B:Bishop"
+      puts 'Invalid: must be in chess notation format N:Knight, Q:Queen, R:Rook, B:Bishop'
       piece_input = promotion_input
     end
     piece_input
   end
 
   def pawn_played_en_pessant?(piece, move)
-    return true if piece.is_a?(Pawn) && move[1] != piece.current_square[1] && board[move[0]][move[1]] == " "
+    return true if piece.is_a?(Pawn) && move[1] != piece.current_square[1] && board[move[0]][move[1]] == ' '
 
     false
   end
@@ -708,7 +708,7 @@ class PieceMove
 
     row = piece.current_square[0]
     col = piece.current_square[1]
-    board[row][col] = " "
+    board[row][col] = ' '
     create_possible_moves
     check_on_board = check?
     board[row][col] = piece
@@ -724,7 +724,7 @@ class PieceMove
       piece.pinned = true
       row = piece.current_square[0]
       col = piece.current_square[1]
-      board[row][col] = " "
+      board[row][col] = ' '
       create_possible_moves
       if piece.color == :white
         find_checking_pieces(:white)
@@ -776,7 +776,7 @@ class PieceMove
       else
         starting_col -= 1
       end
-      return false if board[row][starting_col] != " "
+      return false if board[row][starting_col] != ' '
     end
     true
   end
@@ -845,8 +845,8 @@ class PieceMove
     rook_row = move[0]
     rook_col = move[1]
     rook = board[rook_row][rook_col]
-    board[king_row][king_col] = " "
-    board[rook_row][rook_col] = " "
+    board[king_row][king_col] = ' '
+    board[rook_row][rook_col] = ' '
     if king_col < rook_col
       board[king_row][king_col + 2] = king
       board[rook_row][rook_row - 2] = rook

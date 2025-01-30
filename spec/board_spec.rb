@@ -1,21 +1,21 @@
-require_relative "../lib/board"
+require_relative '../lib/board'
 describe Board do
   let(:chess_board) { described_class.new }
-  describe "#display_baord" do
+  describe '#display_baord' do
     before do
       chess_board.fill_board
     end
-    context "when board is filled" do
-      it "displays pieces correctly" do
+    context 'when board is filled' do
+      it 'displays pieces correctly' do
         chess_board.display_board
       end
     end
   end
-  describe "#fill_board" do
+  describe '#fill_board' do
     before do
       chess_board.send(:fill_board)
     end
-    it "fills board with chess pieces" do
+    it 'fills board with chess pieces' do
       expected_positions = {
         # White major pieces
         [0, 0] => Rook, [0, 1] => Knight, [0, 2] => Bishop, [0, 3] => Queen, [0, 4] => King,
@@ -38,7 +38,7 @@ describe Board do
         expect(chess_board.board[row][col]).to be_a(piece_class)
       end
     end
-    it "places black pieces correctly" do
+    it 'places black pieces correctly' do
       expected_colors = {
         # (row 0): Black pieces
         [0, 0] => :black, [0, 1] => :black, [0, 2] => :black, [0, 3] => :black,
@@ -54,7 +54,7 @@ describe Board do
         expect(piece.color).to eq(expected_color)
       end
     end
-    it "places white pieces correctly" do
+    it 'places white pieces correctly' do
       expected_colors = {
         # (row 7): White pieces
         [7, 0] => :white, [7, 1] => :white, [7, 2] => :white, [7, 3] => :white,
@@ -70,7 +70,7 @@ describe Board do
         expect(piece.color).to eq(expected_color)
       end
     end
-    it "sets the current squares" do
+    it 'sets the current squares' do
       staring_rows = [0, 1, 6, 7]
       chess_board.board.each_with_index do |row, row_index|
         row.each_index do |col_index|
@@ -83,12 +83,12 @@ describe Board do
     end
   end
 
-  describe "#highlight" do
+  describe '#highlight' do
     before do
       chess_board.fill_board
     end
-    context "when board is filled" do
-      it "displays pieces correctly" do
+    context 'when board is filled' do
+      it 'displays pieces correctly' do
         moves = [[0, 0]]
         chess_board.highlight(moves)
       end

@@ -25,7 +25,7 @@ class Board
         if (row_index + col_index).even?
           display_background(col, WHITE_BACKGROUND)
         else
-          display_background(col, GREEN_BACKGROUND)
+          display_background(col, LIGH_STEEL_BLUE_BACKGROUND)
         end
       end
       print "\n"
@@ -44,11 +44,11 @@ class Board
       row.each_with_index do |col, col_index|
         # binding.pry
         if moves.include?([row_index, col_index])
-          display_background(col, YELLOW_BACKGROUND)
+          display_background(col, LILAC_BACKGROUND)
         elsif (row_index + col_index).even?
           display_background(col, WHITE_BACKGROUND)
         else
-          display_background(col, GREEN_BACKGROUND)
+          display_background(col, LIGH_STEEL_BLUE_BACKGROUND)
         end
       end
       print "\n"

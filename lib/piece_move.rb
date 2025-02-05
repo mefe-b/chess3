@@ -107,7 +107,6 @@ class PieceMove
       end
       enemy_moves = enemy_moves.uniq
       king.possible_moves.dup.each do |move|
-        # binding.pry
         king.possible_moves.delete(move) if enemy_moves.include?(move)
         if board[move[0]][move[1]] != ' ' && board[move[0]][move[1]].color == king.color
           king.possible_moves.delete(move)
@@ -116,7 +115,6 @@ class PieceMove
       next if king.possible_moves.empty?
 
       king.possible_moves.dup.each do |move|
-        # binding.pry if @black_king.possible_moves[0] == [1, 5]
         row = king.current_square[0]
         col = king.current_square[1]
         removed_piece = @board[move[0]][move[1]]
@@ -176,9 +174,6 @@ class PieceMove
     @black_pieces.clear
   end
 
-  # must create valid moves for other pieces before king
-  # other pieces moves dictate where the king can go
-  # b/c kings moves that put them in check are invalid
   def remove_impossible_non_king_moves
     (0..7).each do |row|
       (0..7).each do |col|
@@ -216,7 +211,6 @@ class PieceMove
   end
 
   def remove_diagonal_up_right(row, col, piece)
-    # binding.pry if row == 7 && col == 2
     while square_in_bounds?(row - 1, col + 1) && @board[row - 1][col + 1] == ' '
       row -= 1
       col += 1
@@ -233,7 +227,6 @@ class PieceMove
   end
 
   def remove_diagonal_down_left(row, col, piece)
-    # binding.pry
     while square_in_bounds?(row + 1, col - 1) && @board[row + 1][col - 1] == ' '
       row += 1
       col -= 1

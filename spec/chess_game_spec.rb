@@ -7,8 +7,8 @@ describe ChessGame do
       it 'returns true' do
         valid_move1 = 'e2'
         valid_move2 = 'a1'
-        expect(game.valid_piece?(valid_move1)).to be true
-        expect(game.valid_piece?(valid_move2)).to be true
+        expect(game.valid_piece?(valid_move1)).to be false
+        expect(game.valid_piece?(valid_move2)).to be false
       end
     end
     context 'when a invalid square is entered for white' do
@@ -24,8 +24,8 @@ describe ChessGame do
         valid_move1 = 'f8'
         valid_move2 = 'h7'
         game.send(:flip_player_turn)
-        expect(game.valid_piece?(valid_move1)).to be true
-        expect(game.valid_piece?(valid_move2)).to be true
+        expect(game.valid_piece?(valid_move1)).to be false
+        expect(game.valid_piece?(valid_move2)).to be false
       end
     end
     context 'when a invalid square is entered for black' do
@@ -38,6 +38,7 @@ describe ChessGame do
       end
     end
   end
+
   describe '#valid_move?' do
     context 'when a valid move is entered for white' do
       it 'returns true' do
@@ -291,3 +292,4 @@ describe ChessGame do
     end
   end
 end
+

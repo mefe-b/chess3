@@ -2,13 +2,13 @@ require 'pry-byebug'
 require 'rainbow'
 Dir[File.join(__dir__, 'pieces', '*.rb')].sort.each { |file| require file }
 
-# Describes a chess board
 class Board
   attr_accessor :board
 
   WHITE_BACKGROUND = 'ffffff'.freeze
-  LIGH_STEEL_BLUE_BACKGROUND = '6e7b8b'.freeze
+  LIGHT_STEEL_BLUE_BACKGROUND = '6e7b8b'.freeze
   LILAC_BACKGROUND = '8470ff'.freeze
+  
   def initialize
     @board = Array.new(8) { Array.new(8) { ' ' } }
   end
@@ -25,7 +25,7 @@ class Board
         if (row_index + col_index).even?
           display_background(col, WHITE_BACKGROUND)
         else
-          display_background(col, LIGH_STEEL_BLUE_BACKGROUND)
+          display_background(col, LIGHT_STEEL_BLUE_BACKGROUND)
         end
       end
       print "\n"
@@ -42,13 +42,12 @@ class Board
     @board.each_with_index do |row, row_index|
       print "#{count} "
       row.each_with_index do |col, col_index|
-        # binding.pry
         if moves.include?([row_index, col_index])
           display_background(col, LILAC_BACKGROUND)
         elsif (row_index + col_index).even?
           display_background(col, WHITE_BACKGROUND)
         else
-          display_background(col, LIGH_STEEL_BLUE_BACKGROUND)
+          display_background(col, LIGHT_STEEL_BLUE_BACKGROUND)
         end
       end
       print "\n"

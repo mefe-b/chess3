@@ -1,5 +1,6 @@
 require 'yaml'
-require_relative 'piece_move'
+require 'fileutils'
+require_relative '../lib/piece_move'
 class ChessGame
   attr_accessor :board, :move_logic
 
@@ -49,14 +50,28 @@ class ChessGame
   end
 
   def save_game?(input)
-    input == 'save'
+    input.strip.downcase == 'save'
   end
 
   def save_game
     puts 'Enter a name for the save file'
-    save_name = gets.chomp
-    save_file = File.new("lib/saves/#{save_name}.yml", 'w')
-    save_file.puts(to_yaml)
+    save_name = gets.chomp.strip
+
+    return if save_name.empty?
+
+    save_dir = File.join(__dir__, 'saves')
+    FileUtils.mkdir_p(save_dir)
+
+    file_path = File.join(save_dir, "#{save_name}.yml")
+
+    File.open(file_path, 'w') do |file|
+      file.write(to_yaml)
+    end
+    puts "Game saved to #{file_path}!"
+
+    abort
+  rescue StandardError => e
+    puts "Save failed: #{e.message}"
   end
 
   def load_game?(input)
@@ -71,6 +86,12 @@ class ChessGame
   end
 
   def load_game
+    save_dir = File.join(__dir__, 'saves')
+    unless Dir.exist?(save_dir)
+      puts "Save directory not found: #{save_dir}"
+      return
+    end
+
     i = 1
     save_files = {}
     Dir.foreach('lib/saves') do |filename|
@@ -88,8 +109,10 @@ class ChessGame
   end
 
   def commands(command)
-    quit if quit?(command)
-    save_game if save_game?(command)
+    command = command.downcase.strip
+    return quit if quit?(command)
+    return save_game if save_game?(command)
+
     load_game if load_game?(command)
   end
 
@@ -169,7 +192,8 @@ class ChessGame
 
   def valid_piece_input
     square = piece_input
-    commands(square)
+    return if commands(square)
+
     until valid_piece?(square)
       puts "#{square} is not valid, please enter a valid move"
       square = piece_input
@@ -194,19 +218,20 @@ class ChessGame
 
   def valid_piece?(square)
     draw_offer(square)
-    unless draw?
-      return false if square == 'draw'
-      return false unless square.length == 2
-
-      selected_square = PieceMove.convert_chess_notation(square)
-      return false unless square_in_range?(selected_square)
-
-      selected_piece = @board[selected_square[0]][selected_square[1]]
-      return true if selected_piece != ' ' && selected_piece.color == @color_turn
-    end
     return true if draw?
 
-    false
+    return false if square == 'draw'
+    return false unless square.length == 2
+
+    selected_square = PieceMove.convert_chess_notation(square)
+    return false unless square_in_range?(selected_square)
+
+    selected_piece = @board[selected_square[0]][selected_square[1]]
+    return false if selected_piece == ' ' || selected_piece.color != @color_turn
+
+    return false if selected_piece.possible_moves.empty?
+
+    true
   end
 
   def piece_input
@@ -230,10 +255,14 @@ class ChessGame
 
   def valid_move_input
     move = move_input
+    return if commands(move)
+
     until valid_move?(@selected_square, move)
       puts "#{move} is not a valid move"
       move = move_input
+      commands(move)
     end
+
     return if cancel?(move)
 
     puts "\nSquare to move: #{move}"
@@ -277,12 +306,13 @@ class ChessGame
   end
 
   def display_commands
-    puts 'Commands q:quit save:save game load:load game cancel: to select another piece'
+    puts 'Commands are open: save: save the game, load: load the game, cancel: draw to choose another draw: draw request'
   end
 
   def play_game
     play_round until checkmate? || draw?
-    puts 'Checkmate, Game over'
+    puts 'Game over'
     abort
   end
 end
+

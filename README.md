@@ -44,7 +44,7 @@ ruby main.rb
 RSpec is used to test the core game logic. To run the tests, simply use:
 
 ```bash
-rspec
+bundle exec rspec
 ```
 
 🚧 Future Enhancements
